@@ -1,0 +1,42 @@
+html
+<form id="contact-form" action="#" method="post" novalidate>
+  <label>
+    Name
+    <input name="name" type="text" required minlength="2" />
+  </label>
+
+  <label>
+    Email
+    <input name="email" type="email" required />
+  </label>
+
+  <label>
+    Start Date
+    <input name="start" type="date" />
+  </label>
+
+  <label>
+    Favorite Color
+    <input name="favcolor" type="color" />
+  </label>
+
+  <label>
+    Website
+    <input name="site" type="url" placeholder="https://example.com" />
+  </label>
+
+  <button type="submit">Send</button>
+</form>
+
+
+<script>
+  
+  document.getElementById('contact-form').addEventListener('submit', (e) => {
+    if (!e.target.checkValidity()) {
+      e.preventDefault();
+      const firstInvalid = e.target.querySelector(':invalid');
+      firstInvalid.focus();
+      alert(firstInvalid.validationMessage);
+    }
+  });
+</script>

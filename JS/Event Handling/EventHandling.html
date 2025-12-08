@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; padding: 20px; transition: 0.3s; }
+        .container { border: 2px solid #333; padding: 20px; width: 300px; }
+        button { padding: 10px; margin: 5px; cursor: pointer; }
+        .hidden-msg { display: none; color: red; font-weight: bold; }
+        a { display: block; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>JS Event Handling</h1>
+    
+    <div class="container" id="buttonBox">
+        <p>Click a button to change background:</p>
+        <!-- Note: buttons don't have IDs. Delegationis used -->
+        <button class="color-btn" data-color="#FFD700">Gold</button>
+        <button class="color-btn" data-color="#FF6347">Tomato</button>
+        <button class="color-btn" data-color="#87CEEB">Sky Blue</button>
+    </div>
+
+    <h3>Keyboard Challenge:</h3>
+    <p>Press 'Enter' to see a secret message.</p>
+    <p id="secret" class="hidden-msg">The Answer to the Ultimate Question of Life, the Universe, and Everything is... forty-two. </p>
+
+    <a href="https://google.com" id="blockedLink">Don't leave this page (Link Blocked)</a>
+
+    <script>
+        // --- 1. EVENT DELEGATION (Clicking Buttons) ---
+        const box = document.querySelector("#buttonBox");
+
+        // We listen to the BOX, not the individual buttons
+        box.addEventListener("click", function(e) {
+            // Check if the thing actually clicked was a button
+            if(e.target.tagName === "BUTTON") {
+                // Get the color stored in the html data-color attribute
+                const color = e.target.getAttribute("data-color");
+                
+                // Change body background
+                document.body.style.backgroundColor = color;
+                
+                console.log("You picked: " + color);
+            }
+        });
+
+
+        // --- 2. KEYBOARD EVENTS (Pressing Enter) ---
+        // Listen to the whole window for key presses
+        window.addEventListener("keydown", function(e) {
+            // 'e.key' holds the name of the key
+            if(e.key === "Enter") {
+                document.querySelector("#secret").style.display = "block";
+            } else {
+                document.querySelector("#secret").style.display = "none";
+            }
+        });
+
+
+        // --- 3. PREVENT DEFAULT  ---
+        const link = document.querySelector("#blockedLink");
+
+        link.addEventListener("click", function(e) {
+            // Stop the link from going to Google
+            e.preventDefault(); 
+            alert("I used e.preventDefault() to stop you from leaving!");
+        });
+
+    </script>
+</body>
+</html>

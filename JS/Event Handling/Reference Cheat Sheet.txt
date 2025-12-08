@@ -1,0 +1,27 @@
+┌─────────────────────────────────────────────────────────────┐
+│                    EVENT TYPES                              │
+├─────────────────────────────────────────────────────────────┤
+│ MOUSE:     click, dblclick, mouseenter, mouseleave,        │
+│            mousedown, mouseup, mousemove, contextmenu       │
+├─────────────────────────────────────────────────────────────┤
+│ KEYBOARD:  keydown, keyup, keypress (deprecated)            │
+├─────────────────────────────────────────────────────────────┤
+│ FORM:      submit, change, input, focus, blur, reset        │
+├─────────────────────────────────────────────────────────────┤
+│ WINDOW:    load, DOMContentLoaded, resize, scroll,          │
+│            beforeunload, online, offline                    │
+├─────────────────────────────────────────────────────────────┤
+│ TOUCH:     touchstart, touchmove, touchend, touchcancel     │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                  EVENT OBJECT                               │
+├─────────────────────────────────────────────────────────────┤
+│ e.target         → Element that triggered event             │
+│ e.currentTarget  → Element with the listener                │
+│ e.type           → Event type (click, keydown, etc)         │
+│ e.preventDefault() → Stop default behavior                  │
+│ e.stopPropagation() → Stop event bubbling                   │
+│ e.key            → Key pressed (for keyboard)               │
+│ e.clientX/Y      → Mouse position (viewport)                │
+└─────────────────────────────────────────────────────────────┘

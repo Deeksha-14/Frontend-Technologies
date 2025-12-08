@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+    <style>
+        body { font-family: Arial; max-width: 500px; margin: 50px auto; }
+        .todo-input { width: 70%; padding: 10px; }
+        .add-btn { padding: 10px 20px; }
+        .todo-list { list-style: none; padding: 0; }
+        .todo-item { 
+            padding: 10px; 
+            margin: 5px 0; 
+            background: #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .todo-item.completed { text-decoration: line-through; opacity: 0.6; }
+        .delete-btn { background: red; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Simple Todo App</h1>
+    <input type="text" class="todo-input" placeholder="Enter a task...">
+    <button class="add-btn">Add</button>
+    <ul class="todo-list"></ul>
+
+    <script>
+        const input = document.querySelector('.todo-input');
+        const addBtn = document.querySelector('.add-btn');
+        const todoList = document.querySelector('.todo-list');
+
+        // Add task on button click
+        addBtn.addEventListener('click', addTask);
+
+        // Add task on Enter key
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        function addTask() {
+            const text = input.value.trim();
+            if (text === '') return;
+
+            const li = document.createElement('li');
+            li.className = 'todo-item';
+            li.innerHTML = `
+                <span class="todo-text">${text}</span>
+                <button class="delete-btn">Delete</button>
+            `;
+            todoList.appendChild(li);
+            input.value = '';
+            input.focus();
+        }
+
+        // Event Delegation for delete and toggle
+        todoList.addEventListener('click', function(e) {
+            const item = e.target.closest('.todo-item');
+            
+            // Delete button clicked
+            if (e.target.classList.contains('delete-btn')) {
+                item.remove();
+            }
+            
+            // Todo text clicked - toggle completed
+            if (e.target.classList.contains('todo-text')) {
+                item.classList.toggle('completed');
+            }
+        });
+
+        // Double-click to edit
+        todoList.addEventListener('dblclick', function(e) {
+            if (e.target.classList.contains('todo-text')) {
+                const span = e.target;
+                const currentText = span.textContent;
+                const input = document.createElement('input');
+                input.value = currentText;
+                input.className = 'edit-input';
+                span.replaceWith(input);
+                input.focus();
+
+                input.addEventListener('blur', saveEdit);
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') saveEdit.call(this);
+                    if (e.key === 'Escape') {
+                        const newSpan = document.createElement('span');
+                        newSpan.className = 'todo-text';
+                        newSpan.textContent = currentText;
+                        this.replaceWith(newSpan);
+                    }
+                });
+
+                function saveEdit() {
+                    const newSpan = document.createElement('span');
+                    newSpan.className = 'todo-text';
+                    newSpan.textContent = this.value || currentText;
+                    this.replaceWith(newSpan);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

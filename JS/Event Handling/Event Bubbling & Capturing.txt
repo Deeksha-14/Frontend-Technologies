@@ -1,0 +1,2 @@
+CAPTURING: Window → Document → HTML → Body → Parent → Child
+BUBBLING:  Child → Parent → Body → HTML → Document → Window

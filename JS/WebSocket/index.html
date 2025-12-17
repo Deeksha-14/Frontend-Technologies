@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        #log { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+
+<h2>WebSocket Frontend</h2>
+
+<input id="msg" placeholder="Type message" />
+<button onclick="sendMessage()">Send</button>
+
+<div id="log"></div>
+
+<script>
+    // Create WebSocket connection on port 8080
+    const socket = new WebSocket('ws://localhost:8080');
+
+    const log = document.getElementById('log');
+
+    function writeLog(message) {
+        log.innerHTML += `<div>${message}</div>`;
+    }
+
+    // Connection opened
+    socket.addEventListener('open', () => {
+        writeLog('🟢 Connected to server');
+    });
+
+    // Listen for messages
+    socket.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+        writeLog(`📩 ${data.type}: ${data.message}`);
+    });
+
+    // Connection closed
+    socket.addEventListener('close', () => {
+        writeLog('🔴 Connection closed');
+    });
+
+    function sendMessage() {
+        const input = document.getElementById('msg');
+        socket.send(input.value);
+        input.value = '';
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.board {
+  display: flex;
+  gap: 20px;
+}
+
+.column {
+  width: 250px;
+  min-height: 300px;
+  border: 2px solid #ccc;
+  padding: 10px;
+  background: #f9f9f9;
+}
+
+.column h3 {
+  text-align: center;
+}
+
+.card {
+  padding: 10px;
+  margin: 10px 0;
+  background: #e0e0e0;
+  cursor: grab;
+}

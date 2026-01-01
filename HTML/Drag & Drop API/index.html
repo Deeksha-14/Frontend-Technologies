@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Drag & Drop Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>HTML5 Drag & Drop Demo</h2>
+
+<div class="board">
+
+  <div class="column todo" data-status="todo">
+    <h3>To Do</h3>
+    <div class="card" draggable="true" id="task1">Design UI</div>
+    <div class="card" draggable="true" id="task2">Write API</div>
+  </div>
+
+  <div class="column in-progress" data-status="in-progress">
+    <h3>In Progress</h3>
+  </div>
+
+  <div class="column done" data-status="done">
+    <h3>Done</h3>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

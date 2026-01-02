@@ -1,0 +1,28 @@
+/* Default Light Theme */
+:root {
+    --background-color: #fff;
+    --text-color: #333;
+    --button-background: #ddd;
+    --button-text: #000;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+button {
+    background-color: var(--button-background);
+    color: var(--button-text);
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dark Theme */
+body.dark-mode {
+    --background-color: #333;
+    --text-color: #fff;
+    --button-background: #444;
+    --button-text: #fff;
+}

@@ -29,12 +29,12 @@ function saveState() {
     state[card.id] = status;
   });
 
-  localStorage.setItem("kanbanState", JSON.stringify(state));
+  localStorage.setItem("State", JSON.stringify(state));
 }
 
 /* RESTORE STATE */
 function loadState() {
-  const state = JSON.parse(localStorage.getItem("kanbanState"));
+  const state = JSON.parse(localStorage.getItem("State"));
   if (!state) return;
 
   Object.keys(state).forEach(cardId => {
@@ -53,3 +53,4 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js")
     .then(() => console.log("Service Worker registered"));
 }
+

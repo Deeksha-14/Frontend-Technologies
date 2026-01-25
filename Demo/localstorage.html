@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>localStorage API Demo - HTML5 Storage</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+            --bg-primary: #0a0a0f;
+            
+        }
+      body {
+        background: linear-gradient(
+          135deg,
+          #0f0f1a 0%,
+          #1a1a2e 50%,
+          #16213e 100%
+        );
+        min-height: 100vh;
+      }
+      .glow-text {
+        text-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+      }
+      .code-block {
+        background: #1a1a2e;
+        border-left: 4px solid #22c55e;
+        font-family: "Courier New", monospace;
+      }
+      .storage-item {
+        animation: slideIn 0.3s ease-out;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* Light Theme */
+      .theme-light {
+        background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+        color: #1f2937;
+      }
+      .theme-light .bg-gray-800\/50 {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+      }
+      .theme-light .text-gray-300 {
+        color: #4b5563;
+      }
+      .theme-light .border-gray-700 {
+        border-color: #d1d5db;
+      }
+      .theme-light input,
+      .theme-light button {
+        background: #ffffff;
+        color: #1f2937;
+        border: 1px solid #d1d5db;
+      }
+
+      /* Dark Theme (default) */
+      .theme-dark {
+        background: linear-gradient(
+          135deg,
+          #0f0f1a 0%,
+          #1a1a2e 50%,
+          #16213e 100%
+        );
+        color: #e5e7eb;
+      }
+    </style>
+  </head>
+  <body class="text-gray-100">
+    <!-- Back to Home -->
+    <div class="fixed top-4 left-4 z-50">
+      <a
+        href="index.html"
+        class="flex items-center gap-2 px-4 py-2 bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-lg hover:bg-gray-700/80 transition-all"
+      >
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Home</span>
+      </a>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-4 py-20">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <div
+          class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-green-500/20 mb-6"
+        >
+          <i class="fas fa-database text-green-400 text-4xl"></i>
+        </div>
+        <h1 class="text-5xl font-bold mb-4 glow-text">localStorage API</h1>
+        <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+          Client-side storage that persists data across browser sessions
+        </p>
+      </div>
+
+      <!-- Description Section For Cookie -->
+      <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-8 mb-8">
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+          <i class="fas fa-info-circle text-green-400"></i>
+          What is Cookies?
+        </h2>
+        <div class="space-y-4 text-gray-300">
+          <p class="text-justify">
+            Before discussing Web Storage, we need to understand the mechanism
+            it was designed to improve:
+            <strong class="text-green-400">HTTP Cookies</strong>. Cookies were
+            introduced in 1994 by
+            <strong class="text-gray-200">Lou Montulli</strong> at Netscape
+            Communications. They were created to solve a fundamental problem
+            with HTTP: statelessness. Each HTTP request is independent, with no
+            memory of previous interactions. Cookies provided a mechanism for
+            servers to store small pieces of data on the client.
+          </p>
+
+          <!-- CArd base 
+                 <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-8 mb-8">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                        Technical Limitations of Cookies
+                    </h2>
+                    <div class="text-gray-300 mb-6">
+                        <p>While cookies are fundamental to web functionality, they come with several technical constraints:</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-gray-900/50 p-4 rounded-lg border-l-4 border-yellow-400">
+                            <h3 class="font-semibold text-yellow-400 mb-2 flex items-center gap-2">
+                                <i class="fas fa-database"></i>
+                                Size Constraint
+                            </h3>
+                            <p class="text-sm mb-2">4KB maximum per cookie</p>
+                            <p class="text-xs text-red-400">
+                                <i class="fas fa-arrow-right mr-1"></i>
+                                Insufficient for complex application data
+                            </p>
+                        </div>
+                        <div class="bg-gray-900/50 p-4 rounded-lg border-l-4 border-yellow-400">
+                            <h3 class="font-semibold text-yellow-400 mb-2 flex items-center gap-2">
+                                <i class="fas fa-network-wired"></i>
+                                Network Overhead
+                            </h3>
+                            <p class="text-sm mb-2">Sent with every HTTP request</p>
+                            <p class="text-xs text-red-400">
+                                <i class="fas fa-arrow-right mr-1"></i>
+                                Increased bandwidth consumption
+                            </p>
+                        </div>
+                        <div class="bg-gray-900/50 p-4 rounded-lg border-l-4 border-yellow-400">
+                            <h3 class="font-semibold text-yellow-400 mb-2 flex items-center gap-2">
+                                <i class="fas fa-code"></i>
+                                API Design
+                            </h3>
+                            <p class="text-sm mb-2">String-based manipulation only</p>
+                            <p class="text-xs text-red-400">
+                                <i class="fas fa-arrow-right mr-1"></i>
+                                Complex parsing required for read operations
+                            </p>
+                        </div>
+                        <div class="bg-gray-900/50 p-4 rounded-lg border-l-4 border-yellow-400">
+                            <h3 class="font-semibold text-yellow-400 mb-2 flex items-center gap-2">
+                                <i class="fas fa-shield-alt"></i>
+                                Security Exposure
+                            </h3>
+                            <p class="text-sm mb-2">Vulnerable to XSS and CSRF</p>
+                            <p class="text-xs text-red-400">
+                                <i class="fas fa-arrow-right mr-1"></i>
+                                Additional security measures required
+                            </p>
+                        </div>
+                        <div class="bg-gray-900/50 p-4 rounded-lg border-l-4 border-yellow-400">
+                            <h3 class="font-semibold text-yellow-400 mb-2 flex items-center gap-2">
+                                <i class="fas fa-sitemap"></i>
+                                Scope Control
+                            </h3>
+                            <p class="text-sm mb-2">Path and domain based</p>
+                            <p class="text-xs text-red-400">
+                                <i class="fas fa-arrow-right mr-1"></i>
+                                Limited granularity
+                            </p>
+                        </div>
+                    </div>
+                </div> -->
+
+          <div
+            class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-8 mb-8"
+          >
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+              <i class="fas fa-exclamation-triangle text-red-500"></i>
+              Technical Limitations of Cookies
+            </h2>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-gray-300">
+                <thead>
+                  <tr class="border-b border-gray-700">
+                    <th class="py-3 px-4 text-green-400 font-semibold">
+                      Limitation
+                    </th>
+                    <th class="py-3 px-4 text-green-400 font-semibold">
+                      Description
+                    </th>
+                    <th class="py-3 px-4 text-green-400 font-semibold">
+                      Impact
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700/50">
+                  <tr class="hover:bg-gray-700/30 transition-colors">
+                    <td class="py-3 px-4">
+                      <span class="flex items-center gap-2">
+                        <i class="fas fa-database text-lime-600"></i>
+                        Size Constraint
+                      </span>
+                    </td>
+                    <td class="py-3 px-4 text-sm">4KB maximum per cookie</td>
+                    <td class="py-3 px-4 text-sm">
+                      Insufficient for complex application data
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-gray-700/30 transition-colors">
+                    <td class="py-3 px-4">
+                      <span class="flex items-center gap-2">
+                        <i class="fas fa-network-wired text-lime-600"></i>
+                        Network Overhead
+                      </span>
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                      Sent with every HTTP request
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                      Increased bandwidth consumption
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-gray-700/30 transition-colors">
+                    <td class="py-3 px-4">
+                      <span class="flex items-center gap-2">
+                        <i class="fas fa-code text-lime-600"></i>
+                        API Design
+                      </span>
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                      String-based manipulation only
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                      Complex parsing required for read operations
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-gray-700/30 transition-colors">
+                    <td class="py-3 px-4">
+                      <span class="flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-lime-600"></i>
+                        Security Exposure
+                      </span>
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                      Vulnerable to XSS and CSRF
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                      Additional security measures required
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-gray-700/30 transition-colors">
+                    <td class="py-3 px-4">
+                      <span class="flex items-center gap-2">
+                        <i class="fas fa-sitemap text-lime-600"></i>
+                        Scope Control
+                      </span>
+                    </td>
+                    <td class="py-3 px-4 text-sm">Path and domain based</td>
+                    <td class="py-3 px-4 text-sm">Limited granularity</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description Section -->
+      <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-8 mb-8">
+        <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+          <i class="fas fa-info-circle text-green-400"></i>
+          What is localStorage?
+        </h2>
+        <div class="space-y-4 text-gray-300">
+          <p>
+            The <strong class="text-green-400">localStorage API</strong> is part
+            of the Web Storage API introduced in HTML5. It allows web
+            applications to store data locally in the user's browser with no
+            expiration time.
+          </p>
+          <div class="grid md:grid-cols-2 gap-4 mt-6">
+            <div class="bg-gray-900/50 p-4 rounded-lg">
+              <h3 class="font-semibold text-green-400 mb-2">📅 Introduction</h3>
+              <p class="text-sm">
+                Introduced in 2009 as part of HTML5 specification by the W3C and
+                WHATWG
+              </p>
+            </div>
+            <div class="bg-gray-900/50 p-4 rounded-lg">
+              <h3 class="font-semibold text-green-400 mb-2">
+                💾 Storage Capacity
+              </h3>
+              <p class="text-sm">Typically 5-10MB per origin (domain)</p>
+            </div>
+            <div class="bg-gray-900/50 p-4 rounded-lg">
+              <h3 class="font-semibold text-green-400 mb-2">🔄 Persistence</h3>
+              <p class="text-sm">Data persists even after browser/tab closes</p>
+            </div>
+            <div class="bg-gray-900/50 p-4 rounded-lg">
+              <h3 class="font-semibold text-green-400 mb-2">🔐 Security</h3>
+              <p class="text-sm">
+                Same-origin policy, accessible only to the same domain
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Demo Section -->
+      <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-8 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <i class="fas fa-flask text-green-400"></i>
+          Interactive Demo
+        </h2>
+
+        <!-- Controls -->
+        <div class="grid md:grid-cols-2 gap-4 mb-6">
+          <div>
+            <label class="block text-sm font-semibold mb-2 text-gray-400"
+              >Key</label
+            >
+            <input
+              type="text"
+              id="keyInput"
+              placeholder="e.g., username"
+              class="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg focus:outline-none focus:border-green-500 text-white"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2 text-gray-400"
+              >Value</label
+            >
+            <input
+              type="text"
+              id="valueInput"
+              placeholder="e.g., JohnDoe"
+              class="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg focus:outline-none focus:border-green-500 text-white"
+            />
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3 mb-6">
+          <button
+            onclick="setItem()"
+            class="px-6 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <i class="fas fa-plus"></i> Set Item
+          </button>
+          <button
+            onclick="getItem()"
+            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <i class="fas fa-search"></i> Get Item
+          </button>
+          <button
+            onclick="removeItem()"
+            class="px-6 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <i class="fas fa-trash"></i> Remove Item
+          </button>
+          <button
+            onclick="clearAll()"
+            class="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <i class="fas fa-trash-alt"></i> Clear All
+          </button>
+          <button
+            onclick="displayAll()"
+            class="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <i class="fas fa-list"></i> Show All Items
+          </button>
+        </div>
+
+        <!-- Output Area -->
+        <div
+          class="bg-gray-900/50 border border-gray-700 rounded-lg p-4 min-h-32"
+        >
+          <h3 class="font-semibold mb-3 text-green-400">Output:</h3>
+          <div id="output" class="text-gray-300 font-mono text-sm">
+            Click buttons to interact with localStorage...
+          </div>
+        </div>
+
+        <!-- Current Storage Display -->
+        <div class="mt-6 bg-gray-900/50 border border-gray-700 rounded-lg p-4">
+          <h3 class="font-semibold mb-3 text-green-400 flex items-center gap-2">
+            <i class="fas fa-database"></i> Current localStorage Contents:
+          </h3>
+          <div id="storageList" class="space-y-2">
+            <!-- Storage items will be displayed here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme Switcher (The Star of the Show) -->
+      <div
+        class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-8 mb-10 text-center"
+      >
+        <h2 class="text-3xl font-bold mb-6">Choose Your Theme</h2>
+        <div class="flex justify-center gap-6">
+          <button
+            id="darkBtn"
+            class="px-8 py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 bg-gray-900 border-2 border-gray-600"
+          >
+            <i class="fas fa-moon mr-2"></i> Dark Mode
+          </button>
+          <button
+            id="lightBtn"
+            class="px-8 py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 bg-yellow-50 text-gray-900 border-2 border-yellow-400"
+          >
+            <i class="fas fa-sun mr-2"></i> Light Mode
+          </button>
+        </div>
+        <p class="mt-6 text-green-400 font-semibold text-lg">
+          <i class="fas fa-check-circle mr-2"></i>
+          <span id="status">Theme is currently loaded from localStorage</span>
+        </p>
+      </div>
+
+      <!-- Code Examples -->
+      <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <i class="fas fa-code text-green-400"></i>
+          Code Examples
+        </h2>
+
+        <div class="space-y-4">
+          <!-- Set Item -->
+          <div class="code-block p-4 rounded-lg">
+            <p class="text-green-400 font-semibold mb-2">// Set an item</p>
+            <code class="text-gray-300"
+              >localStorage.setItem('username', 'JohnDoe');</code
+            >
+          </div>
+
+          <!-- Get Item -->
+          <div class="code-block p-4 rounded-lg">
+            <p class="text-green-400 font-semibold mb-2">// Get an item</p>
+            <code class="text-gray-300"
+              >const user = localStorage.getItem('username');</code
+            >
+          </div>
+
+          <!-- Remove Item -->
+          <div class="code-block p-4 rounded-lg">
+            <p class="text-green-400 font-semibold mb-2">// Remove an item</p>
+            <code class="text-gray-300"
+              >localStorage.removeItem('username');</code
+            >
+          </div>
+
+          <!-- Clear All -->
+          <div class="code-block p-4 rounded-lg">
+            <p class="text-green-400 font-semibold mb-2">// Clear all items</p>
+            <code class="text-gray-300">localStorage.clear();</code>
+          </div>
+
+          <!-- Store Objects -->
+          <div class="code-block p-4 rounded-lg">
+            <p class="text-green-400 font-semibold mb-2">
+              // Storing objects (must stringify)
+            </p>
+            <code class="text-gray-300">
+              const user = { name: 'John', age: 30 };<br />
+              localStorage.setItem('user', JSON.stringify(user));<br />
+              const retrieved = JSON.parse(localStorage.getItem('user'));
+            </code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Examples for cookie-->
+      <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <i class="fas fa-code text-green-400"></i>
+          Code Examples Of Cookies
+        </h2>
+
+        <div class="space-y-4">
+          <!-- Set Item -->
+          <div class="code-block p-4 rounded-lg">
+            <p class="text-green-400 font-semibold mb-2">// Cookie API</p>
+            <code class="text-gray-300"
+              >document.cookie = "username=john; expires=Thu, 18 Dec 2025
+              12:00:00 UTC; path=/";</code
+            >
+          </div>
+
+          <!-- Get Item -->
+          <div class="code-block p-4 rounded-lg">
+            <p class="text-green-400 font-semibold mb-2">
+              // Want to READ that Cookie?
+            </p>
+            <code class="text-gray-100">const cookies = document.cookie;</code>
+            <p class="text-green-200 font-semibold mb-2">
+              // Returns ALL cookies as ONE string
+            </p>
+            <p class="text-green-200 font-semibold mb-2">
+              // Output: "username=john; theme=dark; sessionId=abc123"
+            </p>
+            <p class="text-green-200 font-semibold mb-2">
+              // Manual parsing required to extract individual values
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- <nav class="flex items-center gap-4">
+        <a href="index.html" class="px-4 py-2 btn-secondary rounded-lg text-sm">
+          <i class="fas fa-home mr-2"></i>Back to Home
+        </a>
+      </nav> -->
+    </div>
+
+    <script>
+      const THEME_KEY = "preferred-theme";
+      const statusEl = document.getElementById("status");
+      const darkBtn = document.getElementById("darkBtn");
+      const lightBtn = document.getElementById("lightBtn");
+
+      // Apply saved theme on load – THIS IS THE MONEY SHOT
+      function applyTheme() {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+
+        if (savedTheme === "light") {
+          document.documentElement.classList.remove("theme-dark");
+          document.documentElement.classList.add("theme-light");
+          lightBtn.classList.add("ring-4", "ring-yellow-400");
+          darkBtn.classList.remove("ring-4", "ring-green-400");
+          statusEl.textContent = "Light theme loaded from localStorage";
+        } else {
+          // Default to dark (or if 'dark' explicitly saved)
+          document.documentElement.classList.remove("theme-light");
+          document.documentElement.classList.add("theme-dark");
+          darkBtn.classList.add("ring-4", "ring-green-400");
+          lightBtn.classList.remove("ring-4", "ring-yellow-400");
+          statusEl.textContent =
+            savedTheme === "dark"
+              ? "Dark theme loaded from localStorage"
+              : "No theme saved yet → defaulting to dark";
+        }
+        displayAll(); // Refresh storage list
+      }
+
+      // Save theme
+      function setTheme(theme) {
+        localStorage.setItem(THEME_KEY, theme);
+        applyTheme();
+      }
+
+      darkBtn.addEventListener("click", () => setTheme("dark"));
+      lightBtn.addEventListener("click", () => setTheme("light"));
+
+      // Function to display output
+      function showOutput(message, type = "info") {
+        const output = document.getElementById("output");
+        const colors = {
+          success: "text-green-400",
+          error: "text-red-400",
+          info: "text-blue-400",
+          warning: "text-yellow-400",
+        };
+        output.innerHTML = `<span class="${colors[type]}">${message}</span>`;
+      }
+
+      // Set item to localStorage
+      function setItem() {
+        const key = document.getElementById("keyInput").value.trim();
+        const value = document.getElementById("valueInput").value.trim();
+
+        if (!key || !value) {
+          showOutput("❌ Please enter both key and value!", "error");
+          return;
+        }
+
+        try {
+          localStorage.setItem(key, value);
+          showOutput(`✅ Successfully set: "${key}" = "${value}"`, "success");
+
+          // Clear inputs
+          document.getElementById("keyInput").value = "";
+          document.getElementById("valueInput").value = "";
+
+          // Refresh display
+          displayAll();
+        } catch (e) {
+          showOutput(`❌ Error: ${e.message}`, "error");
+        }
+      }
+
+      // Get item from localStorage
+      function getItem() {
+        const key = document.getElementById("keyInput").value.trim();
+
+        if (!key) {
+          showOutput("❌ Please enter a key to retrieve!", "error");
+          return;
+        }
+
+        const value = localStorage.getItem(key);
+
+        if (value === null) {
+          showOutput(`⚠️ No value found for key: "${key}"`, "warning");
+        } else {
+          showOutput(`✅ Retrieved: "${key}" = "${value}"`, "success");
+        }
+      }
+
+      // Remove item from localStorage
+      function removeItem() {
+        const key = document.getElementById("keyInput").value.trim();
+
+        if (!key) {
+          showOutput("❌ Please enter a key to remove!", "error");
+          return;
+        }
+
+        if (localStorage.getItem(key) === null) {
+          showOutput(`⚠️ Key "${key}" does not exist!`, "warning");
+        } else {
+          localStorage.removeItem(key);
+          showOutput(`✅ Successfully removed: "${key}"`, "success");
+          displayAll();
+        }
+      }
+
+      // Clear all localStorage
+      function clearAll() {
+        if (localStorage.length === 0) {
+          showOutput("⚠️ localStorage is already empty!", "warning");
+          return;
+        }
+
+        if (confirm("Are you sure you want to clear all localStorage items?")) {
+          localStorage.clear();
+          showOutput("✅ All items cleared from localStorage!", "success");
+          displayAll();
+        }
+      }
+
+      // Display all localStorage items
+      function displayAll() {
+        const storageList = document.getElementById("storageList");
+        const output = document.getElementById("output");
+
+        if (localStorage.length === 0) {
+          storageList.innerHTML =
+            '<p class="text-gray-500 italic">No items in localStorage</p>';
+          showOutput("ℹ️ localStorage is empty", "info");
+          return;
+        }
+
+        let html = "";
+        let items = [];
+
+        // Get all items
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          const value = localStorage.getItem(key);
+          items.push({ key, value });
+        }
+
+        // Display items
+        items.forEach((item) => {
+          html += `
+                    <div class="storage-item flex items-center justify-between bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                        <div class="flex-1">
+                            <span class="text-green-400 font-semibold">${item.key}:</span>
+                            <span class="text-gray-300 ml-2">${item.value}</span>
+                        </div>
+                        <button onclick="quickRemove('${item.key}')" class="text-red-400 hover:text-red-300 px-2">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+        });
+
+        storageList.innerHTML = html;
+        showOutput(
+          `✅ Found ${localStorage.length} item(s) in localStorage`,
+          "success"
+        );
+      }
+
+      // Quick remove from storage list
+      function quickRemove(key) {
+        localStorage.removeItem(key);
+        showOutput(`✅ Removed: "${key}"`, "success");
+        displayAll();
+      }
+
+      // Initialize display on page load
+      //window.addEventListener('load', displayAll);
+      // Initialize on page load
+      window.addEventListener("load", () => {
+        applyTheme();
+      });
+
+      // Add Enter key support for inputs
+      document
+        .getElementById("keyInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") setItem();
+        });
+      document
+        .getElementById("valueInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") setItem();
+        });
+    </script>
+  </body>
+</html>
